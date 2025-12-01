@@ -1,5 +1,19 @@
 services:
 
+  dns-server:
+    image: coredns/coredns:latest
+    container_name: dns-server
+    restart: always
+    command: ["-conf", "/etc/coredns/Corefile"]
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      - ./dns/Corefile:/etc/coredns/Corefile:ro
+      - ./dns/proyectosd.db:/etc/coredns/proyectosd.db:ro
+    networks:
+      - dns_net
+
   # Redis para Sidekiq/Cache
   redis:
     image: redis:7-alpine
@@ -194,3 +208,5 @@ networks:
     external: true
   dmz_net:
     external: true
+  dns_net:
+    driver: bridge
