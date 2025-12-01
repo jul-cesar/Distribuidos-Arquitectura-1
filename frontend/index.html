@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spree Commerce - Arquitectura Distribuida</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+        max-width: 900px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 40px;
+        font-size: 1.1rem;
+      }
+
+      .architecture {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+      }
+
+      .architecture h2 {
+        color: #764ba2;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+      }
+
+      .layer {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 4px solid #667eea;
+      }
+
+      .layer h3 {
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+
+      .components {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .component {
+        background: #667eea;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .component.db {
+        background: #48bb78;
+      }
+
+      .component.lb {
+        background: #ed8936;
+      }
+
+      .links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 30px;
+      }
+
+      .link-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: block;
+      }
+
+      .link-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .link-card h4 {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+      }
+
+      .link-card p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      .footer {
+        text-align: center;
+        color: #666;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+      }
+
+      .status {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #48bb78;
+        margin-left: 8px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Spree Commerce</h1>
+      <p class="subtitle">
+        Arquitectura Distribuida con Alta Disponibilidad
+        <span class="status"></span>
+      </p>
+
+      <div class="architecture">
+        <h2>📊 Arquitectura del Sistema</h2>
+
+        <div class="layer">
+          <h3>🌐 Capa de Load Balancing</h3>
+          <div class="components">
+            <div class="component lb">Frontend LB</div>
+            <div class="component lb">Backend LB</div>
+          </div>
+        </div>
+
+        <div class="layer">
+          <h3>💻 Capa de Aplicación</h3>
+          <div class="components">
+            <div class="component">Frontend 1</div>
+            <div class="component">Frontend 2</div>
+            <div class="component">Frontend 3</div>
+            <div class="component">Backend 1</div>
+            <div class="component">Backend 2</div>
+            <div class="component">Backend 3</div>
+          </div>
+        </div>
+
+        <div class="layer">
+          <h3>🗄️ Capa de Base de Datos</h3>
+          <div class="components">
+            <div class="component db">DB Master</div>
+            <div class="component db">DB Replica 1</div>
+            <div class="component db">DB Replica 2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="links">
+        <a href="http://localhost:3000" class="link-card">
+          <h4>🌐 Frontend</h4>
+          <p>Puerto 3000</p>
+        </a>
+        <a href="http://localhost:4000" class="link-card">
+          <h4>⚙️ Backend API</h4>
+          <p>Puerto 4000</p>
+        </a>
+        <a href="http://localhost:4000/admin" class="link-card">
+          <h4>👨‍💼 Admin Panel</h4>
+          <p>Spree Admin</p>
+        </a>
+      </div>
+
+      <div class="footer">
+        <p>✨ Sistema desplegado con Docker Compose</p>
+        <p style="margin-top: 5px; font-size: 0.9rem">
+          PostgreSQL Replicado | Ruby on Rails | Nginx Load Balancer
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

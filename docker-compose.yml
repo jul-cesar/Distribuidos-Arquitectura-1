@@ -1,0 +1,171 @@
+services:
+
+  db-master:
+    image: postgres:16
+    container_name: db-master
+    restart: always
+    networks:
+      - internal_net
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./database/master.env
+    volumes:
+      - db-master-data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+
+  db-replica1:
+    image: postgres:16
+    container_name: db-replica1
+    restart: always
+    networks:
+      - internal_net
+    depends_on:
+      - db-master
+    env_file:
+      - ./database/replica.env
+    environment:
+      - PRIMARY_HOST=db-master
+    volumes:
+      - db-replica1-data:/var/lib/postgresql/data
+      - ./database/replica/entrypoint-replica.sh:/entrypoint-replica.sh
+    entrypoint: ["/entrypoint-replica.sh"]
+
+  db-replica2:
+    image: postgres:16
+    container_name: db-replica2
+    restart: always
+    networks:
+      - internal_net
+    depends_on:
+      - db-master
+    env_file:
+      - ./database/replica.env
+    environment:
+      - PRIMARY_HOST=db-master
+    volumes:
+      - db-replica2-data:/var/lib/postgresql/data
+      - ./database/replica/entrypoint-replica.sh:/entrypoint-replica.sh
+    entrypoint: ["/entrypoint-replica.sh"]
+
+  spree-backend-1:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spree-backend-1
+    restart: always
+    networks:
+      - dmz_net
+      - internal_net
+    depends_on:
+      - db-master
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgresql://spree:spreepass@db-master:5432/spree_db
+    ports:
+      - "3001:3000"
+
+  spree-backend-2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spree-backend-2
+    restart: always
+    networks:
+      - dmz_net
+      - internal_net
+    depends_on:
+      - db-master
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgresql://spree:spreepass@db-master:5432/spree_db
+    ports:
+      - "3002:3000"
+
+  spree-backend-3:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spree-backend-3
+    restart: always
+    networks:
+      - dmz_net
+      - internal_net
+    depends_on:
+      - db-master
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgresql://spree:spreepass@db-master:5432/spree_db
+    ports:
+      - "3003:3000"
+
+  backend-lb:
+    image: nginx:stable
+    container_name: backend-lb
+    restart: always
+    networks:
+      - dmz_net
+    depends_on:
+      - spree-backend-1
+      - spree-backend-2
+      - spree-backend-3
+    volumes:
+      - ./load-balancers/backend-nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "4000:80"
+
+  frontend-1:
+    image: nginx:stable
+    container_name: frontend-1
+    restart: always
+    networks:
+      - dmz_net
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+  frontend-2:
+    image: nginx:stable
+    container_name: frontend-2
+    restart: always
+    networks:
+      - dmz_net
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+  frontend-3:
+    image: nginx:stable
+    container_name: frontend-3
+    restart: always
+    networks:
+      - dmz_net
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+  frontend-lb:
+    image: nginx:stable
+    container_name: frontend-lb
+    restart: always
+    networks:
+      - dmz_net
+    depends_on:
+      - frontend-1
+      - frontend-2
+      - frontend-3
+    volumes:
+      - ./load-balancers/frontend-nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "3000:80"
+
+volumes:
+  db-master-data:
+  db-replica1-data:
+  db-replica2-data:
+
+networks:
+  internal_net:
+    external: true
+  dmz_net:
+    external: true
