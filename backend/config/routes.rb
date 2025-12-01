@@ -1,6 +1,13 @@
 require "sidekiq/web" # require the web UI
 
 Rails.application.routes.draw do
+  # Custom API endpoints (MUST be before Spree routes)
+  namespace :api do
+    namespace :v1 do
+      get 'users/me', to: 'users#me'
+    end
+  end
+
   Spree::Core::Engine.add_routes do
     # Storefront routes
     scope '(:locale)', locale: /#{Spree.available_locales.join('|')}/, defaults: { locale: nil } do

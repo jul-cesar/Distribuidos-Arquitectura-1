@@ -1,5 +1,23 @@
 services:
 
+  # Redis para Sidekiq/Cache
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    networks:
+      - internal_net
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
   db-master:
     image: postgres:16
     container_name: db-master
@@ -59,10 +77,12 @@ services:
       - internal_net
     depends_on:
       - db-master
+      - redis
     env_file:
       - ./backend/.env
     environment:
       - DATABASE_URL=postgresql://spree:spreepass@db-master:5432/spree_db
+      - REDIS_URL=redis://redis:6379/0
     ports:
       - "3001:3000"
 
@@ -77,10 +97,12 @@ services:
       - internal_net
     depends_on:
       - db-master
+      - redis
     env_file:
       - ./backend/.env
     environment:
       - DATABASE_URL=postgresql://spree:spreepass@db-master:5432/spree_db
+      - REDIS_URL=redis://redis:6379/0
     ports:
       - "3002:3000"
 
@@ -95,10 +117,12 @@ services:
       - internal_net
     depends_on:
       - db-master
+      - redis
     env_file:
       - ./backend/.env
     environment:
       - DATABASE_URL=postgresql://spree:spreepass@db-master:5432/spree_db
+      - REDIS_URL=redis://redis:6379/0
     ports:
       - "3003:3000"
 
@@ -160,6 +184,7 @@ services:
       - "3000:80"
 
 volumes:
+  redis-data:
   db-master-data:
   db-replica1-data:
   db-replica2-data:

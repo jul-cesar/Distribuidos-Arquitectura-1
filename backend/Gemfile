@@ -95,6 +95,9 @@ gem 'sidekiq'
 # Use Devise for authentication
 gem "devise"
 
+# Enable CORS for API access
+gem 'rack-cors'
+
 # Sentry for error/performance monitoring
 gem 'sentry-ruby'
 gem 'sentry-rails'

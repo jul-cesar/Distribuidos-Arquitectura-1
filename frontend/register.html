@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro - Tienda Online</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .register-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 500px;
+        padding: 3rem;
+      }
+
+      .logo {
+        text-align: center;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      h1 {
+        text-align: center;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #718096;
+        margin-bottom: 2rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        margin-top: 1rem;
+      }
+
+      .btn-secondary:hover {
+        background: #f7fafc;
+      }
+
+      .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: none;
+      }
+
+      .alert.error {
+        background: #fed7d7;
+        color: #742a2a;
+        border: 1px solid #fc8181;
+      }
+
+      .alert.success {
+        background: #c6f6d5;
+        color: #22543d;
+        border: 1px solid #48bb78;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .password-hint {
+        font-size: 0.875rem;
+        color: #718096;
+        margin-top: 0.25rem;
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #718096;
+      }
+
+      .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .login-link a:hover {
+        text-decoration: underline;
+      }
+
+      .back-link {
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .back-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .back-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="logo">🛍️</div>
+      <h1>Crear Cuenta</h1>
+      <p class="subtitle">Regístrate para empezar a comprar</p>
+
+      <div id="alert" class="alert"></div>
+
+      <form id="registerForm" onsubmit="register(event)">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" required placeholder="tu@email.com" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña *</label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="••••••••"
+            minlength="6"
+          />
+          <div class="password-hint">Mínimo 6 caracteres</div>
+        </div>
+
+        <div class="form-group">
+          <label for="passwordConfirmation">Confirmar Contraseña *</label>
+          <input
+            type="password"
+            id="passwordConfirmation"
+            required
+            placeholder="••••••••"
+            minlength="6"
+          />
+        </div>
+
+        <button type="submit" class="btn" id="registerBtn">
+          🚀 Crear Cuenta
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="window.location.href='/login.html'"
+        >
+          Ya tengo cuenta - Iniciar Sesión
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; color: #718096">Creando cuenta...</p>
+      </div>
+
+      <div class="back-link">
+        <a href="/">← Volver a la tienda</a>
+      </div>
+    </div>
+
+    <script>
+      const OAUTH_TOKEN_URL = "/spree_oauth/token";
+      const OAUTH_CLIENT_ID = "sDdImYdx_kqvffaOTNxYsOtX_5w1XQGkxrr9RaTLIpg";
+      const OAUTH_CLIENT_SECRET =
+        "$2a$12$u7yy7JgbJuyKp25BGkskHOz7Ei1Yv3pH3KzOq72RnzhMVWaijAswy";
+
+      async function register(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const passwordConfirmation = document.getElementById(
+          "passwordConfirmation"
+        ).value;
+        const registerBtn = document.getElementById("registerBtn");
+        const loading = document.getElementById("loading");
+        const alert = document.getElementById("alert");
+
+        // Hide alert
+        alert.style.display = "none";
+
+        // Validate passwords match
+        if (password !== passwordConfirmation) {
+          showAlert("✗ Las contraseñas no coinciden", "error");
+          return;
+        }
+
+        // Show loading
+        registerBtn.disabled = true;
+        loading.style.display = "block";
+
+        try {
+          // 1. Create user account
+          const signupResponse = await fetch("/api/v2/storefront/account", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user: {
+                email: email,
+                password: password,
+                password_confirmation: passwordConfirmation,
+              },
+            }),
+          });
+
+          if (!signupResponse.ok) {
+            const errorData = await signupResponse.json();
+            throw new Error(
+              errorData.error ||
+                errorData.errors?.join(", ") ||
+                "Error al crear la cuenta"
+            );
+          }
+
+          // 2. Auto-login after registration
+          const loginResponse = await fetch(OAUTH_TOKEN_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              grant_type: "password",
+              username: email,
+              password: password,
+              client_id: OAUTH_CLIENT_ID,
+              client_secret: OAUTH_CLIENT_SECRET,
+            }),
+          });
+
+          if (!loginResponse.ok) {
+            throw new Error(
+              "Cuenta creada pero error al iniciar sesión automáticamente"
+            );
+          }
+
+          const loginData = await loginResponse.json();
+
+          // Store token and user info
+          localStorage.setItem("api_token", loginData.access_token);
+          localStorage.setItem("api_token_type", loginData.token_type);
+          localStorage.setItem(
+            "api_token_expiry",
+            Date.now() + loginData.expires_in * 1000
+          );
+          localStorage.setItem("user_email", email);
+
+          // Show success
+          showAlert("✓ Cuenta creada exitosamente. Redirigiendo...", "success");
+
+          // Redirect to home
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1500);
+        } catch (error) {
+          console.error("Register error:", error);
+          showAlert(`✗ Error: ${error.message}`, "error");
+          registerBtn.disabled = false;
+          loading.style.display = "none";
+        }
+      }
+
+      function showAlert(message, type) {
+        const alert = document.getElementById("alert");
+        alert.textContent = message;
+        alert.className = `alert ${type}`;
+        alert.style.display = "block";
+      }
+    </script>
+  </body>
+</html>

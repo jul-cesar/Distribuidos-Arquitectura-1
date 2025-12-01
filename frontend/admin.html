@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administración - Spree Shop</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #667eea;
+        --primary-dark: #5568d3;
+        --success: #48bb78;
+        --danger: #f56565;
+        --warning: #ed8936;
+        --light: #f7fafc;
+        --dark: #2d3748;
+        --gray: #718096;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--light);
+        color: var(--dark);
+        line-height: 1.6;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-dark) 100%
+        );
+        color: white;
+        padding: 1.5rem 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      /* Container */
+      .container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+      }
+
+      /* Toolbar */
+      .toolbar {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .search-box {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.95rem;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: var(--gray);
+        color: white;
+      }
+
+      .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      /* Table */
+      .table-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: var(--light);
+      }
+
+      th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--dark);
+        border-bottom: 2px solid #e2e8f0;
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      tbody tr:hover {
+        background: #f7fafc;
+      }
+
+      .product-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+
+      .product-name {
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      .product-price {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 1.1rem;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .status-active {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+
+      .status-draft {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
+        color: var(--dark);
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .modal-footer {
+        padding: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--gray);
+      }
+
+      /* Form */
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-family: inherit;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      /* Loading */
+      .loading {
+        text-align: center;
+        padding: 3rem;
+        color: var(--gray);
+      }
+
+      .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid var(--primary);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        z-index: 2000;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .toast.success {
+        border-left: 4px solid var(--success);
+      }
+
+      .toast.error {
+        border-left: 4px solid var(--danger);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--gray);
+      }
+
+      .empty-state svg {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div>
+          <h1>🛠️ Panel de Administración</h1>
+          <p style="opacity: 0.9; margin-top: 0.25rem">Gestión de Productos</p>
+        </div>
+        <div class="header-actions">
+          <button
+            onclick="logout()"
+            class="btn btn-secondary btn-sm"
+            style="margin-right: 0.5rem"
+          >
+            🚪 Logout
+          </button>
+          <a href="/" class="btn btn-secondary btn-sm">← Volver a la tienda</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Buscar productos..."
+            onkeyup="filterProducts()"
+          />
+        </div>
+        <button class="btn btn-primary" onclick="openCreateModal()">
+          ➕ Nuevo Producto
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading">
+        <div class="spinner"></div>
+        <p>Cargando productos...</p>
+      </div>
+
+      <!-- Products Table -->
+      <div id="productsTable" class="table-container" style="display: none">
+        <table>
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody">
+            <!-- Products will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state" style="display: none">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          ></path>
+        </svg>
+        <h3>No hay productos</h3>
+        <p>Crea tu primer producto para comenzar</p>
+        <button
+          class="btn btn-primary"
+          onclick="openCreateModal()"
+          style="margin-top: 1rem"
+        >
+          Crear Producto
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal for Create/Edit Product -->
+    <div id="productModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Nuevo Producto</h2>
+          <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="productForm" onsubmit="saveProduct(event)">
+            <input type="hidden" id="productId" />
+
+            <div class="form-group">
+              <label for="productName">Nombre del Producto *</label>
+              <input
+                type="text"
+                id="productName"
+                required
+                placeholder="Ej: Laptop Pro 2024"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="productDescription">Descripción</label>
+              <textarea
+                id="productDescription"
+                placeholder="Descripción detallada del producto..."
+              ></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="productPrice">Precio (USD) *</label>
+                <input
+                  type="number"
+                  id="productPrice"
+                  required
+                  step="0.01"
+                  min="0"
+                  placeholder="99.99"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="productStatus">Estado</label>
+                <select id="productStatus">
+                  <option value="active">Activo</option>
+                  <option value="draft">Borrador</option>
+                  <option value="archived">Archivado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="productSlug">Slug (URL amigable)</label>
+              <input
+                type="text"
+                id="productSlug"
+                placeholder="Se generará automáticamente si se deja vacío"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="productImageUrl">URL de la Imagen</label>
+              <input
+                type="url"
+                id="productImageUrl"
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal()">
+            Cancelar
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="document.getElementById('productForm').requestSubmit()"
+          >
+            <span id="saveButtonText">Guardar Producto</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE_URL = "/api/v2/platform";
+      const STOREFRONT_API = "/api/v2/storefront";
+
+      let products = [];
+      let editingProductId = null;
+      let isAdmin = false;
+
+      // Check authentication and get token
+      function checkAuth() {
+        const token = localStorage.getItem("api_token");
+        const tokenExpiry = localStorage.getItem("api_token_expiry");
+        const adminStatus = localStorage.getItem("is_admin");
+
+        if (!token || !tokenExpiry || Date.now() >= parseInt(tokenExpiry)) {
+          // No token or expired, redirect to login
+          window.location.href = "/login.html";
+          return null;
+        }
+
+        // Check if user is admin
+        if (adminStatus !== "true") {
+          showToast("No tienes permisos de administrador", "error");
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 2000);
+          return null;
+        }
+
+        isAdmin = true;
+        return token;
+      }
+
+      function getApiHeaders() {
+        const token = checkAuth();
+        if (!token) {
+          throw new Error("No authentication token");
+        }
+
+        return {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+      }
+
+      // Load products on page load
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Check auth before loading products
+        const token = checkAuth();
+        if (token) {
+          // Verify admin role with backend
+          await verifyAdminRole(token);
+          if (isAdmin) {
+            loadProducts();
+          }
+        }
+      });
+
+      // Verify admin role with backend
+      async function verifyAdminRole(token) {
+        try {
+          // Use custom endpoint to check admin role
+          const response = await fetch("/api/v1/users/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            isAdmin = userData.is_admin;
+            localStorage.setItem("is_admin", isAdmin);
+            localStorage.setItem("user_id", userData.id);
+
+            if (!isAdmin) {
+              // User is not admin
+              showToast("No tienes permisos de administrador", "error");
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 2000);
+            }
+          } else if (response.status === 401 || response.status === 403) {
+            // Token invalid or user doesn't have permission
+            isAdmin = false;
+            localStorage.setItem("is_admin", "false");
+            showToast("No tienes permisos de administrador", "error");
+            setTimeout(() => {
+              window.location.href = "/";
+            }, 2000);
+          } else {
+            throw new Error("Error verificando permisos");
+          }
+        } catch (error) {
+          console.error("Error verifying admin role:", error);
+          showToast("Error verificando permisos", "error");
+          setTimeout(() => {
+            window.location.href = "/login.html";
+          }, 2000);
+        }
+      }
+
+      async function loadProducts() {
+        try {
+          document.getElementById("loadingState").style.display = "block";
+          document.getElementById("productsTable").style.display = "none";
+          document.getElementById("emptyState").style.display = "none";
+
+          const response = await fetch(
+            `${STOREFRONT_API}/products?per_page=100`
+          );
+          const data = await response.json();
+
+          products = data.data || [];
+
+          if (products.length === 0) {
+            document.getElementById("emptyState").style.display = "block";
+          } else {
+            renderProducts(products);
+            document.getElementById("productsTable").style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error loading products:", error);
+          showToast("Error al cargar productos", "error");
+        } finally {
+          document.getElementById("loadingState").style.display = "none";
+        }
+      }
+
+      function renderProducts(productsToRender) {
+        const tbody = document.getElementById("productsTableBody");
+        tbody.innerHTML = "";
+
+        productsToRender.forEach((product) => {
+          const attrs = product.attributes;
+          const row = document.createElement("tr");
+          row.innerHTML = `
+          <td>
+            <img 
+              src="${
+                attrs.images?.[0]?.styles?.[0]?.url ||
+                "https://via.placeholder.com/60"
+              }" 
+              alt="${attrs.name}" 
+              class="product-image"
+            >
+          </td>
+          <td>
+            <div class="product-name">${attrs.name}</div>
+            <div style="color: var(--gray); font-size: 0.875rem;">${
+              attrs.slug
+            }</div>
+          </td>
+          <td>
+            <div class="product-price">${attrs.display_price || "$0.00"}</div>
+          </td>
+          <td>
+            <span class="status-badge ${
+              attrs.status === "active" ? "status-active" : "status-draft"
+            }">
+              ${attrs.status || "active"}
+            </span>
+          </td>
+          <td>
+            ${
+              attrs.available_on
+                ? new Date(attrs.available_on).toLocaleDateString("es-ES")
+                : "N/A"
+            }
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-primary" onclick="openEditModal(${
+                product.id
+              })">
+                ✏️ Editar
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteProduct(${
+                product.id
+              }, '${attrs.name}')">
+                🗑️
+              </button>
+            </div>
+          </td>
+        `;
+          tbody.appendChild(row);
+        });
+      }
+
+      function filterProducts() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const filtered = products.filter(
+          (product) =>
+            product.attributes.name.toLowerCase().includes(searchTerm) ||
+            product.attributes.slug.toLowerCase().includes(searchTerm)
+        );
+        renderProducts(filtered);
+      }
+
+      function openCreateModal() {
+        editingProductId = null;
+        document.getElementById("modalTitle").textContent = "Nuevo Producto";
+        document.getElementById("saveButtonText").textContent =
+          "Crear Producto";
+        document.getElementById("productForm").reset();
+        document.getElementById("productId").value = "";
+        document.getElementById("productModal").classList.add("active");
+      }
+
+      async function openEditModal(productId) {
+        editingProductId = productId;
+        document.getElementById("modalTitle").textContent = "Editar Producto";
+        document.getElementById("saveButtonText").textContent =
+          "Actualizar Producto";
+
+        // Find product in local array
+        const product = products.find((p) => p.id === productId);
+        if (!product) {
+          showToast("Producto no encontrado", "error");
+          return;
+        }
+
+        const attrs = product.attributes;
+        document.getElementById("productId").value = productId;
+        document.getElementById("productName").value = attrs.name || "";
+        document.getElementById("productDescription").value =
+          attrs.description || "";
+        document.getElementById("productPrice").value = attrs.price || "";
+        document.getElementById("productStatus").value =
+          attrs.status || "active";
+        document.getElementById("productSlug").value = attrs.slug || "";
+        document.getElementById("productImageUrl").value =
+          attrs.images?.[0]?.styles?.[0]?.url || "";
+
+        document.getElementById("productModal").classList.add("active");
+      }
+
+      function closeModal() {
+        document.getElementById("productModal").classList.remove("active");
+        document.getElementById("productForm").reset();
+        editingProductId = null;
+      }
+
+      async function saveProduct(event) {
+        event.preventDefault();
+
+        const productData = {
+          name: document.getElementById("productName").value,
+          description: document.getElementById("productDescription").value,
+          price: parseFloat(document.getElementById("productPrice").value),
+          status: document.getElementById("productStatus").value,
+          slug: document.getElementById("productSlug").value || undefined,
+          available_on: new Date().toISOString(),
+        };
+
+        try {
+          const url = editingProductId
+            ? `${API_BASE_URL}/products/${editingProductId}`
+            : `${API_BASE_URL}/products`;
+
+          const method = editingProductId ? "PATCH" : "POST";
+
+          const response = await fetch(url, {
+            method: method,
+            headers: getApiHeaders(),
+            body: JSON.stringify({ product: productData }),
+          });
+
+          if (response.ok) {
+            showToast(
+              editingProductId
+                ? "Producto actualizado exitosamente"
+                : "Producto creado exitosamente",
+              "success"
+            );
+            closeModal();
+            await loadProducts();
+          } else {
+            const errorData = await response.json();
+            console.error("API Error:", errorData);
+            throw new Error(
+              errorData.error || "Error en la respuesta del servidor"
+            );
+          }
+        } catch (error) {
+          console.error("Error saving product:", error);
+          showToast(`Error: ${error.message}`, "error");
+        }
+      }
+
+      async function deleteProduct(productId, productName) {
+        if (
+          !confirm(`¿Estás seguro de que deseas eliminar "${productName}"?`)
+        ) {
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/products/${productId}`,
+            {
+              method: "DELETE",
+              headers: getApiHeaders(),
+            }
+          );
+
+          if (response.ok || response.status === 204) {
+            showToast("Producto eliminado exitosamente", "success");
+            await loadProducts();
+          } else {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.error || "Error en la respuesta del servidor"
+            );
+          }
+        } catch (error) {
+          console.error("Error deleting product:", error);
+          showToast(`Error: ${error.message}`, "error");
+        }
+      }
+
+      function showToast(message, type = "success") {
+        const existingToast = document.querySelector(".toast");
+        if (existingToast) {
+          existingToast.remove();
+        }
+
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+        <div style="font-weight: 600;">${
+          type === "success" ? "✓" : "✗"
+        } ${message}</div>
+      `;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.remove();
+        }, 3000);
+      }
+
+      // Logout function
+      function logout() {
+        localStorage.removeItem("api_token");
+        localStorage.removeItem("api_token_type");
+        localStorage.removeItem("api_token_expiry");
+        localStorage.removeItem("api_token_created");
+        window.location.href = "/login.html";
+      }
+
+      // Close modal on escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeModal();
+        }
+      });
+
+      // Close modal on outside click
+      document.getElementById("productModal").addEventListener("click", (e) => {
+        if (e.target.id === "productModal") {
+          closeModal();
+        }
+      });
+    </script>
+  </body>
+</html>

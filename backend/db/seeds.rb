@@ -8,4 +8,9 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# Load Spree default data
 Spree::Core::Engine.load_seed if defined?(Spree::Core)
+
+# Load sample products
+puts "\n🛍️  Cargando productos de muestra..."
+load Rails.root.join('db', 'seeds', 'sample_products.rb')

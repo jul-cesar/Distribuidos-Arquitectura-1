@@ -514,6 +514,9 @@ GEM
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.4)
+    rack-cors (3.0.0)
+      logger
+      rack (>= 3.0.14)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -566,7 +569,7 @@ GEM
       i18n
     rbs (3.9.5)
       logger
-    rdoc (6.16.0)
+    rdoc (6.16.1)
       erb
       psych (>= 4.0.0)
       tsort
@@ -628,7 +631,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.47.1, < 2.0)
-    rubocop-rails (2.34.1)
+    rubocop-rails (2.34.2)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
@@ -970,6 +973,7 @@ DEPENDENCIES
   pry
   pry-remote
   puma (>= 5.0)
+  rack-cors
   rails (~> 8.0.0)
   rails-controller-testing
   redis (>= 4.0.1)
@@ -1004,4 +1008,4 @@ RUBY VERSION
    ruby 3.4.7p58
 
 BUNDLED WITH
-   2.6.5
+   2.6.9
