@@ -1,14 +1,8 @@
 $ORIGIN proyectosd.com.
 $TTL 300
 
-@   IN SOA ns1.proyectosd.com. admin.proyectosd.com. (
-        1        ; serial
-        7200     ; refresh
-        3600     ; retry
-        1209600  ; expire
-        300 )    ; minimum
-
+@   IN SOA ns1.proyectosd.com. admin.proyectosd.com. 2024120101 7200 3600 1209600 300
     IN NS ns1.proyectosd.com.
 
-ns1 IN A 192.168.56.1
-www IN A 192.168.56.1
+ns1 IN A 192.168.1.66
+www IN A 192.168.1.66

@@ -559,7 +559,7 @@
     </div>
 
     <script>
-      const API_BASE_URL = "/api/v2/platform";
+      const API_BASE_URL = "/api/v2/storefront";
       const STOREFRONT_API = "/api/v2/storefront";
 
       let products = [];
@@ -816,8 +816,8 @@
 
         try {
           const url = editingProductId
-            ? `${API_BASE_URL}/products/${editingProductId}`
-            : `${API_BASE_URL}/products`;
+            ? `${STOREFRONT_API}/products/${editingProductId}`
+            : `${STOREFRONT_API}/products`;
 
           const method = editingProductId ? "PATCH" : "POST";
 
@@ -857,13 +857,10 @@
         }
 
         try {
-          const response = await fetch(
-            `${API_BASE_URL}/products/${productId}`,
-            {
-              method: "DELETE",
-              headers: getApiHeaders(),
-            }
-          );
+          const response = await fetch(`${API_BASE_URL}/${productId}`, {
+            method: "DELETE",
+            headers: getApiHeaders(),
+          });
 
           if (response.ok || response.status === 204) {
             showToast("Producto eliminado exitosamente", "success");

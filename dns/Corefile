@@ -1,11 +1,9 @@
-# CoreDNS será autoritativo para proyectosd.com
 proyectosd.com:53 {
     log
     errors
-    file /etc/coredns/proyectosd.db proyectosd.com
+    file /proyectosd.db proyectosd.com.
 }
 
-# Para cualquier otro dominio, reenvía a Internet
 .:53 {
     log
     errors
